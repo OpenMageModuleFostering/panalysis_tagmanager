@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/Panalysis_TagManager",
+    "type": "magento-module",
+    "license": "GPL-Version-3",
+    "homepage": "",
+    "description": "Provides support for the Google Tag Manager service with enhanced ecommerce as well as the Open Graph protocol and Twitter Card extensions.",
+    "authors": [
+    {
+        "name": "Rod Jacka",
+        "email": "rod@panalysis.com"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}

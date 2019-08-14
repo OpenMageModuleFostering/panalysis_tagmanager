@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Panalysis_TagManager>
+            <active>true</active>
+            <codePool>community</codePool>
+        </Panalysis_TagManager>
+    </modules>
+</config>

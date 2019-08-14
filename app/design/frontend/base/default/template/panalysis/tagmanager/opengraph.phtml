@@ -1,0 +1,79 @@
+<?php
+$helper = Mage::helper('panalysis_tagmanager');
+
+if($helper->useOpenGraph()){
+    $tm = Mage::getSingleton('panalysis_tagmanager/tagmanager');
+    $storeId = Mage::app()->getStore()->getStoreId();
+    $pgtm_twitter = $this->getTwitterDetails();
+
+    $pgtm_og = [];
+
+    $pgtm_og['page_type'] = $this->getPage();
+    $pgtm_og['title'] = htmlspecialchars($this->getLayout()->getBlock('head')->getTitle(),ENT_QUOTES, null, false);
+
+    $pgtm_og['fb:appid'] = $helper->getFacebookAppId();
+    $pgtm_og['fb:adminid'] = $helper->getFacebookAdminId();
+    $pgtm_og['p:domain_verify'] = $helper->getPinterestId();
+    
+    $pgtm_og['og:url'] = Mage::helper('core/url')->getCurrentUrl();
+
+    if($pgtm_og['page_type']=="Product Detail"){
+        $pgtm_og['og:type'] = "product";
+
+        if(Mage::registry('current_product')){
+            $pan_product_id = Mage::registry('current_product')->getId();
+            $pan_product= Mage::getModel('catalog/product')->setStoreId($storeId)->load($pan_product_id);
+        }
+
+
+        if($pan_product->getTypeId() === Mage_Catalog_Model_Product_Type::TYPE_GROUPED)
+        {
+            $pgtm_og['product:price:amount'] = [];
+            $pgtm_og['product:price:currency'] = Mage::app()->getStore()->getCurrentCurrencyCode();
+
+            foreach ($pan_product->getTypeInstance(true)->getAssociatedProducts($pan_product) as $assoProd)
+            {
+                $pgtm_og['product:price:amount'][] = $tm->getPrice($assoProd->getId());
+            }
+            
+        }elseif($pan_product->getTypeId() === Mage_Catalog_Model_Product_Type::TYPE_BUNDLE)
+        {
+            $associated_ids = $helper->getBundleProducts($pan_product_id);
+            $pgtm_og['product:price:amount'] = [];
+            foreach($associated_ids as $child)
+            {
+               $pgtm_og['product:price:amount'][] = $tm->getPrice($child);
+            }               
+        }else{
+            $pgtm_og['product:price:amount'] = $tm->getPrice($pan_product_id);
+        }
+    }
+
+    if($pgtm_og['page_type']=="Product Category"){
+        $pgtm_og['og:type'] = "product.group";
+    }
+
+    if( $helper->useTwitterCards()){
+        $pgtm_og['twitter:card'] = $pgtm_twitter['card_format'];
+        $pgtm_og['twitter:site'] = $pgtm_twitter['store_username'];
+        $pgtm_og['twitter:creator'] = $pgtm_twitter['creator_username'];
+        $pgtm_og['twitter:image'] = $pgtm_twitter['image'];
+    }
+
+    foreach ($pgtm_og as $k => $v){
+        if(is_array($v)){
+            foreach ($v as $ik => $iv){
+                echo('<meta property="' . $k . '" content="' . $iv . '" />'."\n");
+            }
+        } else {
+            echo('<meta property="' . $k . '" content="' . $v . '" />'."\n"); 
+        }
+        
+    }
+
+
+}
+?>
+
+
+

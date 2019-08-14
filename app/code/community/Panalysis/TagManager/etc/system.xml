@@ -1,0 +1,241 @@
+<?xml version="1.0"?>
+<config>
+    <sections>
+        <panalysis_tagmanager translate="label" module="panalysis_tagmanager">
+            <label>Tag Management</label>
+            <class>separator-top</class>
+            <tab>general</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>9999</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <gtm translate="label">
+                    <label>Google Tag Manager</label>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>true</expanded>
+                    <comment><![CDATA[<span style="float:right;clear:right;margin-right:13px; width:200px;">
+                        <div>
+                        <a href="http://bit.ly/MagentoExtension" target="_blank"><img src="data:image/jpeg;base64,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" width=200 height=24 style="margin-bottom:20px;" alt="Panalysis - Experts in Web Analytics"/></a> 
+                        </div>
+                        <strong><i>Tag Management makes your analytics much simpler.</i></strong>
+                        <p>This extension will assist you to correctly implement the Google Tag Management service using the enhanced e-commerce settings via the data layer.</p>
+                        <p>For support and assistance with this extension please visit <a href="http://bit.ly/MagentoExtension" target="_blank">the support page</a></p>
+                        </span>
+					]]></comment>
+                    <fields>
+                        <version translate="label">
+                            <label>TagManager Version</label>
+                            <frontend_type>select</frontend_type>
+                            <frontend_model>Panalysis_TagManager_Block_Adminhtml_Version</frontend_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </version>
+                        <containerid translate="label">
+                            <label>Container ID</label>
+                            <frontend_type>text</frontend_type>
+                            <backend_model>Panalysis_TagManager_Model_Config_Data_NotEmpty</backend_model>
+                            <comment>Please enter the container of your google tag manager account.</comment>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </containerid>
+                        <brandcode translate="label">
+                            <label>Brand Attribute Code</label>
+                            <frontend_type>text</frontend_type>
+                            <comment>Please enter the attribute code for manufacturer/brand attribute used in your website. If not specified, default manufacturer attribute would be used</comment>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </brandcode>
+                        <colorcode translate="label">
+                            <label>Product Color Attribute Code</label>
+                            <frontend_type>text</frontend_type>
+                            <comment>Please enter the attribute code for color/variant attribute used in your website. If not specified, default color attribute would be used</comment>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </colorcode>
+                        <enable_product_lists translate="label">
+                            <label>Enable Product List View Tracking</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <comment>Turn this on if you would like to track product list impressions.</comment>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </enable_product_lists>
+                        
+                        
+                        <max_products translate="label">
+                            <label>Maximum number of products in list</label>
+                            <frontend_type>text</frontend_type>
+                            <comment>Due to limits in Google Analytics longer product lists will prevent the data being sent to Google Analytics</comment>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <enable_product_lists>1</enable_product_lists>
+                            </depends>
+                        </max_products>
+                        <enable_ajax translate="label">
+                            <label>Enable ajax add to cart tracking</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <comment>Turn this on if site does suppot ajax add to cart feature</comment>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </enable_ajax>
+                    </fields>
+                </gtm>
+                <opengraph translate="label">
+                    <label>Open Graph for Facebook and Twitter Cards</label>
+                    <sort_order>20</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>true</expanded>
+                    <comment><![CDATA[<p>Enabling this feature will insert the Open Graph tags for Facebook and optionally for Twitter Cards.</p>]]></comment>
+                    <fields>
+                        <is_enabled translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </is_enabled>
+                        
+                        <facebookappid translate="label">
+                            <label>Facebook App ID</label>
+                            <frontend_type>text</frontend_type>
+                            <backend_model>Panalysis_TagManager_Model_Config_Data_NotEmpty</backend_model>
+                            <comment>Please enter your Facebook App ID if you are using Open Graph.</comment>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <is_enabled>1</is_enabled>
+                            </depends>
+                        </facebookappid>
+                        
+                        <facebookadminid translate="label">
+                            <label>Facebook Admin ID</label>
+                            <frontend_type>text</frontend_type>
+                            <backend_model>Panalysis_TagManager_Model_Config_Data_NotEmpty</backend_model>
+                            <comment>Please enter your Facebook Admin ID if you are using Open Graph.</comment>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <is_enabled>1</is_enabled>
+                            </depends>
+                        </facebookadminid>
+                        
+                        <pinterestid translate="label">
+                            <label>Pinterest Domain Verification Code</label>
+                            <frontend_type>text</frontend_type>
+                            <comment>If you want to set up Pinterest to confirm your website enter the token here. https://help.pinterest.com/en/articles/confirm-your-website</comment>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <is_enabled>1</is_enabled>
+                            </depends>
+                        </pinterestid>
+                        
+                        <use_twittercards translate="label">
+                            <label>Use Twitter Cards</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <is_enabled>1</is_enabled>
+                            </depends>
+                        </use_twittercards>
+                        
+                        <twitterstoreid>
+                            <label>Twitter Store Username</label>
+                            <frontend_type>text</frontend_type>
+                            <backend_model>Panalysis_TagManager_Model_Config_Data_NotEmpty</backend_model>
+                            <comment>Please enter your Twitter ID (@...) for your store</comment>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <is_enabled>1</is_enabled>
+                                <use_twittercards>1</use_twittercards>
+                            </depends>
+                        </twitterstoreid>
+                        
+                        <twittercreatorid>
+                            <label>Twitter Creator Username</label>
+                            <frontend_type>text</frontend_type>
+                            <comment>If you want to specify a separate Twitter user name for content authorship then enter a value here. The store username will be used if no value is entered here.</comment>
+                            <sort_order>45</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <is_enabled>1</is_enabled>
+                                <use_twittercards>1</use_twittercards>
+                            </depends>
+                        </twittercreatorid>
+                        
+                        <use_largeimage translate="label">
+                            <label>Use Twitter Summary Card with Large Image Feature?</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>46</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <is_enabled>1</is_enabled>
+                                <use_twittercards>1</use_twittercards>
+                            </depends>
+                        </use_largeimage>
+                        
+                        <twitterimage translate="label comment">
+                            <label>Default Twitter Card Image</label>
+                            <comment>Allowed file types: jpeg, gif, png. Note that for products the product image will be used.</comment>
+                            <sort_order>47</sort_order>
+                            <frontend_type>image</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_image</backend_model>
+                            <upload_dir config="system/filesystem/media" scope_info="1">theme</upload_dir>
+                            <base_url type="media" scope_info="1">theme</base_url>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <is_enabled>1</is_enabled>
+                                <use_twittercards>1</use_twittercards>
+                            </depends>
+                        </twitterimage>
+                    </fields>
+                </opengraph>
+            </groups>
+        </panalysis_tagmanager>
+    </sections>
+</config>
