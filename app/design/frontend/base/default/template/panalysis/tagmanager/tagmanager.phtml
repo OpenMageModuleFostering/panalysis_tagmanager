@@ -1,12 +1,9 @@
 <?php
 $helper = Mage::helper('panalysis_tagmanager');
 $contId = $helper->getContainerId();
-?>
-<!-- Start Google Tag Manager -->
-<?php if(isset($contId)): ?>
 
-
-<!-- Google Tag Manager -->
+if(isset($contId)): ?>
+<!-- Start Google Tag Manager Plus by Panalysis. Version: <?php echo $helper->getExtensionVersion(); ?>. See http://www.panalysis.com/gtmplus for details and support -->
 <noscript><iframe src="//www.googletagmanager.com/ns.html?id=<?php echo $contId; ?>"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':

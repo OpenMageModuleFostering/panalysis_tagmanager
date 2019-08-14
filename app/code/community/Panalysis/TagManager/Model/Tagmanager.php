@@ -5,6 +5,7 @@ class Panalysis_TagManager_Model_Tagmanager extends Mage_Core_Model_Abstract
     
     public $checkoutState = "";
     public $categoryProducts = array();
+    private $__cachedCategories = array();
 
     public function getAttributes($product)
     {
@@ -20,7 +21,7 @@ class Panalysis_TagManager_Model_Tagmanager extends Mage_Core_Model_Abstract
      * @param $product
      * @return mixed
      */
-    public function getPrice($product_id)
+    public function getPrice($product_id, $currency='default')
     {
         $storeId = Mage::app()->getStore()->getStoreId();
         $product = Mage::getModel('catalog/product')->setStoreId($storeId)->load($product_id); 
@@ -39,8 +40,10 @@ class Panalysis_TagManager_Model_Tagmanager extends Mage_Core_Model_Abstract
             $price = $product->getFinalPrice();
         }
 
-        $price = Mage::helper('core')->currency($price, false, false);
-        $final_price = Mage::app()->getStore()->roundPrice($price);
+        if(Mage::helper('panalysis_tagmanager')->getUseMultipleCurrencies() || $currency=='user')
+            $price = Mage::helper('core')->currency($price, false, false);
+        
+        $final_price = number_format($price, 2);
         
         return $final_price;
     }
@@ -48,8 +51,9 @@ class Panalysis_TagManager_Model_Tagmanager extends Mage_Core_Model_Abstract
 
     public function getBrand($product)
     {
+
         $brand = '';
-	$product = Mage::getModel('catalog/product')->load($product->getID());
+        //$product = Mage::getModel('catalog/product')->load($product->getID());
         $brandAttr = Mage::helper('panalysis_tagmanager')->getBrandCode();
         $attributes = $this->getAttributes($product);
         
@@ -63,87 +67,104 @@ class Panalysis_TagManager_Model_Tagmanager extends Mage_Core_Model_Abstract
         return $brand;
     }
 
-    public function getVariant($product)
+    /*
+     * (string) getCategory()
+     * Extracts the category for either a specific product or from the current 
+     * category in the registry
+     */
+    public function getCategory($product=null)
     {
-        $color = '';
-	$product = Mage::getModel('catalog/product')->load($product->getID());
-        $colorAttr = Mage::helper('panalysis_tagmanager')->getColorCode();
-        $attributes = $this->getAttributes($product);
-		
-        if (in_array($colorAttr, $attributes)) {
-			$color = @$product->getAttributeText($colorAttr);
-        } else {
-            if (in_array('color', $attributes)) {
-                $color = @$product->getAttributeText('color');
-            }
-        }
-        return $color;
-    }
-
-    public function getCategory($product)
-    {
+        // check whether there is a current category
         $category = Mage::registry('current_category');
-        $catName = '';
-        if (isset($category)) {
-            $catName = $category->getName();
-        } else {
+        if (! isset($category) && isset($product)) {
+            // if there isn't a current category and a product has been supplied
+            // then get the first category listed for that product
             $category = $product->getCategoryCollection()
                 ->addAttributeToSelect('name')
                 ->getFirstItem();
-            if($category->getName()) $catName = $category->getName();
         }
-        return $catName;
+        elseif(! isset($category)) {
+            // otherwise return an empty string
+            return "";
+        }
+        
+        // if we have made it this far then create the string category path
+        $catPath = '';
+        $pathIds = $category->getPathIds();
+        $_key = implode($pathIds, "-");
+        if(array_key_exists($_key, $this->__cachedCategories)){
+            return $this->__cachedCategories[$_key];
+        }
+        
+        // exclude the root level categories from the list
+        $root_id = Mage::app()->getStore()->getRootCategoryId();
+        $is_ok = false;
+        $idList = array();
+        foreach($pathIds as $i){
+            if($i == $root_id){
+                $is_ok = true;
+                continue;
+            }
+            elseif($is_ok==false){
+                continue;
+            }
+            else
+            {
+                $idList[] = $i;
+            }
+        }
+
+        // load the data in a single query to save resources
+        $coll = $category->getResourceCollection();
+        $coll->addAttributeToSelect('name');
+        $coll->addAttributeToFilter('entity_id', array('in' => $idList));
+        $i=0;
+        foreach ($coll as $cat) {
+            if($i>0) $catPath .= " / ";
+            $i++;
+            $catPath .= $cat->getName();
+        }
+        
+        $this->__cachedCategories[$_key] = $catPath;
+        return $catPath;
     }
 
     public function getCatArray($product)
     {
-	$cateNames = array();
-	$product = Mage::getModel('catalog/product')->load($product->getId());
-	$categoryCollection = $product->getCategoryCollection()->addAttributeToSelect('name');
-		
-	foreach($categoryCollection as $category)
-	{
+        $cateNames = array();
+        $product = Mage::getModel('catalog/product')->load($product->getId());
+        $categoryCollection = $product->getCategoryCollection()->addAttributeToSelect('name');
+            
+        foreach($categoryCollection as $category)
+        {
             $cateNames[] = $category->getName();
         }
-		
-	return $cateNames;
+            
+        return $cateNames;
     }
 
     public function setCheckoutState($state){
-	$this->state = $state;
+        $this->state = $state;
     }
-	
+    
     public function getCheckoutState(){
-	return $this->state;
+        return $this->state;
     }
-	
+    
     public function setCategoryProducts($list){
-	$this->categoryProducts = $list;
+        $this->categoryProducts = $list;
     }
-	
+    
     public function getCategoryProducts() {
-	return $this->categoryProducts;
+        return $this->categoryProducts;
     }
-	
+    
     // the following function is modified from https://github.com/CVM/Magento_GoogleTagManager
 
     public function getVisitorData()
     {
-	$data = array();
-	$customer = Mage::getSingleton('customer/session');
-
-	// visitorId
-	if ($customer->getCustomerId()) $data['visitorId'] = (string)$customer->getCustomerId();
-
-	// visitorLoginState
-	$data['visitorLoginState'] = ($customer->isLoggedIn()) ? 'Logged in' : 'Logged out';
-
-	// visitorType
-	$data['visitorType'] = (string)Mage::getModel('customer/group')->load($customer->getCustomerGroupId())->getCode();
-
-        $data = $this->getVisitorOrderData($customer);
-        	
-	return $data;
+        $customer = Mage::getSingleton('customer/session');
+        return $this->getVisitorOrderData($customer);
     }
     
     //check if user placed orders before and get total
@@ -153,10 +174,13 @@ class Panalysis_TagManager_Model_Tagmanager extends Mage_Core_Model_Abstract
         $orders = false;
         
         if(!$customer) $customer = Mage::getSingleton('customer/session');
+        $customerId = $customer->getCustomerId();
+        if ($customerId > 0) $data['customerId'] = (string) $customerId;
         
         if(Mage::getSingleton('customer/session')->isLoggedIn())
         {
-            $orders = Mage::getResourceModel('sales/order_collection')->addFieldToSelect('grand_total')->addFieldToFilter('customer_id',$customer->getId());
+            $orders = Mage::getResourceModel('sales/order_collection')->addFieldToSelect('grand_total')->addAttributeToSelect('created_at')->addFieldToFilter('customer_id',$customer->getId());
+            $data['customerGroup'] = (string)Mage::getModel('customer/group')->load($customer->getCustomerGroupId())->getCode();
             $data['visitorExistingCustomer'] = 'Yes';
         }else{
             
@@ -176,16 +200,23 @@ class Panalysis_TagManager_Model_Tagmanager extends Mage_Core_Model_Abstract
         }
         
         $ordersTotal = 0;
+        $numOrders = 0;
+
         if($orders)
         {
             foreach ($orders as $order)
             {
-                $ordersTotal += $order->getGrandTotal();
+                $ordersTotal += floatval($order->getGrandTotal());
+                $numOrders ++;
             }
         }
         
-        $data['visitorLifetimeValue'] = $this->convertCurrency($ordersTotal);
-        
+        if($customerId > 0) {
+            $data['visitorLifetimeValue'] = $this->convertCurrency($ordersTotal);
+            $data['visitorLifetimeOrders'] = $numOrders; 
+        }
+
+
         return $data;
     }
     
@@ -197,7 +228,7 @@ class Panalysis_TagManager_Model_Tagmanager extends Mage_Core_Model_Abstract
         if($from != $to)
         {
             $price = Mage::helper('directory')->currencyConvert($price, $from, $to);
-            $price = Mage::app()->getStore()->roundPrice($price);
+            $price = number_format($price, 2);
         }
         
         return $price;

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Panalysis_TagManager</name>
-    <version>0.5.3.1</version>
+    <version>0.6.0</version>
     <stability>beta</stability>
     <license uri="http://www.gnu.org/licenses/gpl-3.0.en.html">GPL Version 3</license>
     <channel>community</channel>
@@ -10,11 +10,21 @@
     <description>This extension provides a seamless way of connecting to the Google Tag Manager service by adding both the code snippet and the data layer with enhanced ecommerce references.&#xD;
 &#xD;
 In addition to this it also provides support for the Open Graph tags used by Facebook and Pinterest as well as the Twitter Card extensions</description>
-    <notes>Late beta release. This has been tested on 1.8 and 1.9 editions plus 1.4.1.1</notes>
+    <notes>Late beta release. &#xD;
+&#xD;
+New features:&#xD;
+- Improved support for tracking product categories when the user adds and purchases a product&#xD;
+- Addition of Optimizely code to allow users to run experiments.&#xD;
+- Ability to switch between using the base currency and end user currency&#xD;
+&#xD;
+Bug fixes include:&#xD;
+- refactoring code to improve efficiency and reduce database calls&#xD;
+&#xD;
+Various other minor updates.</notes>
     <authors><author><name>Rod Jacka</name><user>panalysis</user><email>rod@panalysis.com</email></author><author><name>Ariel Tarnowski</name><user>polcode</user><email>ariel.tarnowski@polcode.net</email></author></authors>
-    <date>2016-03-08</date>
-    <time>09:53:21</time>
-    <contents><target name="magecommunity"><dir name="Panalysis"><dir name="TagManager"><dir><dir name="Block"><dir name="Adminhtml"><file name="Version.php" hash="0edf6f9f427413344f8b2688211be290"/></dir><file name="Tagmanager.php" hash="d2207e03645af566c7fd23fb41e30d3e"/><file name=".DS_Store" hash="8cf7b4da68442a0a64d1e153adcd8c82"/></dir><dir name="Helper"><file name="Data.php" hash="2da425e8dd49f3c438d3a28d18b79f3f"/></dir><dir name="Model"><dir name="Config"><dir name="Data"><file name="NotEmpty.php" hash="a38fa920e7f7c0505c7d17ed381f0e13"/></dir><file name=".DS_Store" hash="93d280ed78b5bd9a3aab8e30c0f2e810"/></dir><file name="Observer.php" hash="1627ce3abc61982b5fb353035ef51915"/><file name="Tagmanager.php" hash="b48095724c27b870ef9875ceb33ebe24"/><file name=".DS_Store" hash="60d450ab59b771a3c283579b2d35d28e"/></dir><dir name="controllers"><file name="AjaxController.php" hash="8b6a10a6796078adb0a3490cc4c07d51"/><file name=".DS_Store" hash="194577a7e20bdcc7afbb718f502c134c"/></dir><dir name="etc"><file name="config.xml" hash="06d0c7de0bdfd44260d68b6469c830c5"/><file name="system.xml" hash="29d391af2cf654dfb55dbb5932fcb646"/><file name=".DS_Store" hash="194577a7e20bdcc7afbb718f502c134c"/></dir></dir><file name=".DS_Store" hash="530c1efb8a38b42a2917def94d37be1d"/></dir></dir></target><target name="mageetc"><dir name="modules"><file name="Panalysis_TagManager.xml" hash="04297a3ffe4f6462aa77006fc8076538"/></dir></target><target name="magedesign"><dir name="frontend"><dir name="base"><dir name="default"><dir name="layout"><dir name="panalysis"><file name="tagmanager.xml" hash="84d5ada43613ce1dd51bc183fd7c5dbe"/></dir></dir><dir name="template"><dir name="panalysis"><dir name="tagmanager"><file name="datalayer.phtml" hash="ea18b8a3fc88218277baea41fc982da9"/><file name="opengraph.phtml" hash="9007cb51318e4455fc39cf4427e7b5e9"/><file name="tagmanager.phtml" hash="c15ee13fed00384e39e6b964e7924dd3"/><file name=".DS_Store" hash="194577a7e20bdcc7afbb718f502c134c"/></dir><file name=".DS_Store" hash="c1f8878dd12fabc25a31887912a97869"/></dir></dir></dir></dir></dir></target></contents>
+    <date>2016-05-27</date>
+    <time>00:17:14</time>
+    <contents><target name="magecommunity"><dir name="Panalysis"><dir name="TagManager"><dir><dir name="Block"><dir name="Adminhtml"><file name="Version.php" hash="0edf6f9f427413344f8b2688211be290"/></dir><file name="Tagmanager.php" hash="65a1327495ffa78d5ed41940ebeaabd7"/></dir><dir name="Helper"><file name="Data.php" hash="49e986af5e46ab03421122bc317b682c"/></dir><dir name="Model"><dir name="Config"><dir name="Data"><file name="NotEmpty.php" hash="a38fa920e7f7c0505c7d17ed381f0e13"/></dir></dir><file name="Observer.php" hash="30314ceccea88fd3d7b4823b45022fde"/><file name="Tagmanager.php" hash="667d9e7edcba7330dcd94ccc7040735d"/></dir><dir name="controllers"><file name="AjaxController.php" hash="6ac5c018f10a7469bda41b7ba6c58b36"/></dir><dir name="etc"><file name="config.xml" hash="34b273b5c101503fdc5508756893f7e8"/><file name="system.xml" hash="b44eaac49c1ca0a9e683d61030e9846a"/></dir></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="Panalysis_TagManager.xml" hash="04297a3ffe4f6462aa77006fc8076538"/></dir></target><target name="magedesign"><dir name="frontend"><dir name="base"><dir name="default"><dir name="layout"><dir name="panalysis"><file name="tagmanager.xml" hash="0021ab27d4a24c56c70ef5137710260a"/></dir></dir><dir name="template"><dir name="panalysis"><dir name="tagmanager"><file name="datalayer.phtml" hash="4bd65906c366247c4214d19adbe3949e"/><file name="opengraph.phtml" hash="a3b839ca469a949756e4b4a97ff292a8"/><file name="optimizely.phtml" hash="df6e0ef04f611c6f9a67275fd5843859"/><file name="tagmanager.phtml" hash="da20b6d708e726f9154dae67504129d7"/></dir></dir></dir></dir></dir></dir></target></contents>
     <compatible/>
     <dependencies><required><php><min>5.4.38</min><max>7.0.0</max></php></required></dependencies>
 </package>

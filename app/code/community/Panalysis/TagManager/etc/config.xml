@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Panalysis_TagManager>
-            <version>0.5.3</version>
+            <version>0.6.0</version>
         </Panalysis_TagManager>
     </modules>
     <default>
@@ -38,14 +38,15 @@
                     </panalysis_tagmanager>
                 </observers>
             </checkout_cart_add_product_complete>
+
             
             <checkout_cart_update_items_before>
-		<observers>
+                <observers>
                     <panalysis_tagmanager>
-			<class>panalysis_tagmanager/observer</class>
-			<method>hookToUpdateToCart</method>
+                        <class>panalysis_tagmanager/observer</class>
+                        <method>hookToUpdateToCart</method>
                     </panalysis_tagmanager>
-		</observers>
+                </observers>
             </checkout_cart_update_items_before>
             
             <sales_quote_remove_item>

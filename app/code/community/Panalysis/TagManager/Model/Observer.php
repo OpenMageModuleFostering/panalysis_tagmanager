@@ -1,7 +1,7 @@
 <?php
 
 class Panalysis_TagManager_Model_Observer
-{	
+{    
     public function getLayout() 
     { 
         return Mage::getSingleton('core/layout'); 
@@ -9,13 +9,14 @@ class Panalysis_TagManager_Model_Observer
      
     public function checkoutCartAddProductComplete($observer)
     {
-	$helper = Mage::helper('panalysis_tagmanager');
+       $helper = Mage::helper('panalysis_tagmanager');
         try {
             $product = $observer->getProduct();
             $params = $observer->getRequest()->getParams();
             $qty = 1;
             $price = '';
             $tmProduct = array();
+            $last_cat = Mage::helper('panalysis_tagmanager')->getLastCategoryViewed();
             
             if (isset($params['qty'])) {
                 $filter = new Zend_Filter_LocalizedToNormalized(
@@ -27,33 +28,58 @@ class Panalysis_TagManager_Model_Observer
             $type = $product->getTypeID();
 
             if ($type === Mage_Catalog_Model_Product_Type::TYPE_GROUPED) {
-            	$associatedProducts = $product->getTypeInstance(true)->getAssociatedProducts($product);
-            	foreach($associatedProducts as $ip)
-            	{
+                $associatedProducts = $product->getTypeInstance(true)->getAssociatedProducts($product);
+                foreach($associatedProducts as $ip)
+                {
                     $my_qty = $params['super_group'][$ip->getId()];
                     if($my_qty > 0){
-                        $tmProduct[] = $helper->CreateProductArray($ip->getId(), $my_qty);
+                        $__prod = $helper->createProductArray($ip->getId(), $my_qty);
+                        if($last_cat){
+                            $__prod['category'] = $last_cat;
+                        }
+                        $tmProduct[] = $__prod;
                     }
-            	}
+                }
 
             } elseif ($type === Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
-            	$optionCollection = $product->getTypeInstance()->getOptionsCollection();
-            	$selectionCollection =$product->getTypeInstance()->getSelectionsCollection($product->getTypeInstance()->getOptionsIds());
-		$options = $optionCollection->appendSelections($selectionCollection);
-		foreach( $options as $option )
-		{
-                    $_selections = $option->getSelections();	
-                    
-                    foreach( $_selections as $selection )
-                    { 
-			$tmProduct[] = $helper->CreateProductArray($selection->getId(), $qty);
-                    }
-		} 
+                //$optionCollection = $product->getTypeInstance()->getOptionsCollection();
+                //$selectionCollection =$product->getTypeInstance()->getSelectionsCollection($product->getTypeInstance()->getOptionsIds());
+                //$options = $optionCollection->appendSelections($selectionCollection);
+                
+                $tst_sku = $product->getSku();
+                if(strpos($tst_sku, '-')>0){
+                    $sku_array = explode('-',$tst_sku);
+                    $sku = $sku_array[0];
+                }
+                else{
+                    $sku = $tst_sku;
+                }
+                
+                $product = Mage::getModel('catalog/product')->loadByAttribute('sku',$sku);
+                
+                $__prod = $helper->createProductArray($ip->getId(), $qty);
+                if($last_cat){
+                    $__prod['category'] = $last_cat;
+                }
+                $tmProduct[] = $__prod;
+
             } elseif($type === Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE){
+                $_parent = Mage::getModel('catalog/product')->load($params['product']);
                 $product = Mage::getModel('catalog/product')->loadByAttribute('sku', $product->getSku());
-                $tmProduct[] = $helper->CreateProductArray($product->getId(), $qty);
+                $__prod = $helper->createProductArray($product, $qty);
+                // replace the SKU with the item from the parent SKU. Google Analytics doesn't handle SKUs properly.
+                $__prod['id'] = $_parent->getSku();
+                $__prod['variant'] = $product->getSku();
+                if($last_cat){
+                    $__prod['category'] = $last_cat;
+                }
+                $tmProduct[] = $__prod;
             }else {
-                $tmProduct[] = $helper->CreateProductArray($product->getId(), $qty);
+                $__prod = $helper->createProductArray($product->getId(), $qty);
+                if($last_cat){
+                    $__prod['category'] = $last_cat;
+                }
+                $tmProduct[] = $__prod;
             }
             
             $session = Mage::getSingleton('core/session');
@@ -63,6 +89,9 @@ class Panalysis_TagManager_Model_Observer
             }
             
             $session->setTmProduct($tmProduct);
+            
+            foreach($tmProduct as $prod)
+                $helper->updateSkuCategoryDetails($prod['id'],$prod['category']);
             
         } catch (exception $e) {
             Mage::logException($e);
@@ -88,7 +117,7 @@ class Panalysis_TagManager_Model_Observer
                 $product = Mage::getModel('catalog/product')->load($item->getProductId());
                 if($product->getTypeId() === Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE ||
                     $product->getTypeId() === Mage_Catalog_Model_Product_Type::TYPE_BUNDLE)
-                continue;
+                    continue;
 
                 if($item->getParentItemId())
                 {
@@ -114,33 +143,36 @@ class Panalysis_TagManager_Model_Observer
         return $event;
     }
 
+    
     private function addItemToCart($product_id, $qty=1)
     {
         $helper = Mage::helper('panalysis_tagmanager');
+        $session = Mage::getSingleton('core/session');
         try {
             $addProduct = array();
             $tm = Mage::getSingleton('panalysis_tagmanager/tagmanager');
-            $current_updated = Mage::getSingleton('core/session')->getTmProduct();
-            if($current_updated) $addProduct[] = $current_updated;
-            $addProduct[] = $helper->CreateProductArray($product_id, $qty);
-            $session = Mage::getSingleton('core/session');
+            $current_updated = $session->getTmProduct();
+            if($current_updated) $addProduct = $current_updated;
+            $addProduct[$product_id] = $helper->createProductArray($product_id, $qty);
             $session->setTmProduct($addProduct);
+            
         } catch (exception $e) {
             Mage::logException($e);
         }
     }
     
-    private function removeItemFromCart($product_id, $qty)
+    private function removeItemFromCart($product, $qty)
     {
         $helper = Mage::helper('panalysis_tagmanager');
+        $session = Mage::getSingleton('core/session');
         try {
             $rmProduct = array();
             $tm = Mage::getSingleton('panalysis_tagmanager/tagmanager');
-            $current_updated = Mage::getSingleton('core/session')->getRmProducts();
-            if($current_updated) $rmProduct[] = $current_updated;
-            $rmProduct[] = $helper->CreateProductArray($product_id, $qty);
-            $session = Mage::getSingleton('core/session');
+            $current_updated = $session->getRmProducts();
+            if($current_updated) $rmProduct = $current_updated;
+            $rmProduct[$product] = $helper->createProductArray($product, $qty);
             $session->setRmProducts($rmProduct);
+            
         } catch (exception $e) {
             Mage::logException($e);
         }
@@ -153,9 +185,10 @@ class Panalysis_TagManager_Model_Observer
         $product = Mage::getModel('catalog/product')->load($item->getId());
         if($product->getTypeId() === Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE)
         {
-            $product = Mage::getModel('catalog/product')->loadByAttribute('sku', $item->getSku());
-            return $this->removeItemFromCart($product->getId(), $item->getQty());
-        }elseif($product->getTypeId() === Mage_Catalog_Model_Product_Type::TYPE_BUNDLE)
+            // use the parent product as GA doesn't handle configurable skus well.
+            return $this->removeItemFromCart($product, $item->getQty());
+        } 
+        elseif($product->getTypeId() === Mage_Catalog_Model_Product_Type::TYPE_BUNDLE)
         {
             $qty = $item->getQty();
             $quote_id = $observer->getQuoteItem()->getData('quote_id');
@@ -174,12 +207,13 @@ class Panalysis_TagManager_Model_Observer
             }
             
             return true;
-        }else return $this->removeItemFromCart($product->getId(), $item->getQty());
+        } 
+        else return $this->removeItemFromCart($product->getId(), $item->getQty());
     }
 
     public function checkoutCartEmpty()
     {
-	$helper = Mage::helper('panalysis_tagmanager');
+        $helper = Mage::helper('panalysis_tagmanager');
         $post = Mage::app()->getRequest()->getPost('update_cart_action');
         if ($post == 'empty_cart') {
             $rmProducts = array();
@@ -189,7 +223,7 @@ class Panalysis_TagManager_Model_Observer
                 foreach ($allQuoteItems as $item) {
                     $product = Mage::getSingleton('catalog/product')->load($item->getProductId());
                     $tm = Mage::getSingleton('panalysis_tagmanager/tagmanager');
-                    $rmProduct = $helper->CreateProductArray($product->getId(), $item->getQty());
+                    $rmProduct = $helper->createProductArray($product->getId(), $item->getQty());
 
                     $rmProducts[] = $rmProduct;
                 }
@@ -203,28 +237,65 @@ class Panalysis_TagManager_Model_Observer
     }
     
     public function categoryView(Varien_Event_Observer $observer)
-    {  	
+    {      
         $helper = Mage::helper('panalysis_tagmanager');
+        if(! $helper->getTrackProductList())
+            return;
+
+        $tm = Mage::getSingleton('panalysis_tagmanager/tagmanager');
+
         $catProducts = array();
-        $_products = $observer->getEvent()->getCollection()->load();
-		
+        $catName = $tm->getCategory();
+        $_collection = $observer->getEvent()->getCollection();
+        $colorAttr = 'color';
+        $brandAttr = 'manufacturer';
+            
+        if($helper->getBrandCode() != "")
+            $brandAttr = $helper->getBrandCode();
+        
+        $_collection->addAttributeToSelect($colorAttr)->addAttributeToSelect($brandAttr);
+        $_products = $_collection->load();
         $limit = $helper->getListMaxProducts();
 
-        if(Mage::app()->getRequest()->getModuleName() == 'catalogsearch') $view = 'Search Results';
-        else $view = 'category';
+        if(Mage::app()->getRequest()->getModuleName() == 'catalogsearch'){
+            $view = 'Search Results';
+            $catName = "Search Results";
+        } 
+        else $view = 'Category Listing';
         
         $i = 0;
         foreach ($_products as $_product)
-	{
+        {
             if($i >= $limit) break;
+
+            $brand = $tm->getBrand($_product);
+
+            $prod = array(
+                'name' => $_product->getName(),
+                'id' => $_product->getSku(),
+                'list' => $view,
+                'position' => ++$i,
+                'category' => $catName,
+                'url' => $_product->getProductUrl()
+            );
             
-            $prod = $helper->CreateProductArray($_product->getId());
-            $prod['list'] = $view;
-            $prod['position'] = ++$i;
+            if($_product->getPrice() > 0 )
+                $prod['price'] = $_product->getPrice();
+            elseif($_product->getMinPrice() > 0)
+                $prod['price'] = $_product->getMinPrice();
+
+            if($helper->getUseMultipleCurrencies())
+                $prod['price'] = Mage::helper('core')->currency($prod['price'], false, false);
+
+            $prod['price'] = number_format($prod['price'], 2);
+
+            if($variant) $prod['variant'] = $variant;
+            if($brand) $prod['brand'] = $brand;
+
             $catProducts[] = $prod;
         }
-		
-		$dataLayer = $helper->buildCategoryData($catProducts);
+        
+        $dataLayer = $helper->buildCategoryData($catProducts);
         $dataLayerJs = "<script type='text/javascript'>var dataLayer = dataLayer || []; dataLayer.push(" . json_encode($dataLayer,JSON_PRETTY_PRINT) .");</script>";
         
         echo $dataLayerJs;
@@ -236,6 +307,6 @@ class Panalysis_TagManager_Model_Observer
         $myDataLayer = Mage::app()->getLayout()->createBlock('panalysis_tagmanager/tagmanager');
         $tm = Mage::getSingleton('panalysis_tagmanager/tagmanager');
         $tm->setCheckoutState("start");
-    	Mage::dispatchEvent('panalysis_start_checkout');
+        Mage::dispatchEvent('panalysis_start_checkout');
     }
 } 

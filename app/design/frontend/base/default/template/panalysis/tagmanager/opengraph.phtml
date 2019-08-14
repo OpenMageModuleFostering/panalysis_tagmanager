@@ -1,84 +1,76 @@
 <?php
-    $helper = Mage::helper('panalysis_tagmanager');
-	$tm = Mage::getSingleton('panalysis_tagmanager/tagmanager');
-	
+$helper = Mage::helper('panalysis_tagmanager');
+
+if($helper->useOpenGraph()){
+    $tm = Mage::getSingleton('panalysis_tagmanager/tagmanager');
     $storeId = Mage::app()->getStore()->getStoreId();
-	
-    $pgtm_og = [];
-	
-    $pgtm_og['page_type'] = $this->getPage();
-	
-    $pgtm_og['title'] = htmlspecialchars($this->getLayout()->getBlock('head')->getTitle(),ENT_QUOTES, null, false);
-	
-    $pgtm_og['fbappid'] = $helper->getFacebookAppId();
-    $pgtm_og['fbadminid'] = $helper->getFacebookAdminId();
-    $pgtm_og['pinterestid'] = $helper->getPinterestId();
-	
     $pgtm_twitter = $this->getTwitterDetails();
-	
-if($helper->useOpenGraph()):
-?>
 
-    <?php if( $pgtm_og['fbappid'] != ""): ?>
-    <meta property="fb:app_id" content="<?php echo $pgtm_og['fbappid']; ?>" />
-    <?php endif;?>
-    <?php if( $pgtm_og['fbadminid'] != ""): ?>
-    <meta property="fb:admins" content="<?php echo $pgtm_og['fbadminid']; ?>" />
-    <?php endif;?>
-    <?php if( $pgtm_og['pinterestid'] != ""): ?>
-    <meta name="p:domain_verify" content="<?php echo $pgtm_og['pinterestid']; ?>"/>
-    <?php endif;?>
+    $pgtm_og = [];
 
+    $pgtm_og['page_type'] = $this->getPage();
+    $pgtm_og['title'] = htmlspecialchars($this->getLayout()->getBlock('head')->getTitle(),ENT_QUOTES, null, false);
 
-    <?php if( $helper->useTwitterCards()): ?>
+    $pgtm_og['fb:appid'] = $helper->getFacebookAppId();
+    $pgtm_og['fb:adminid'] = $helper->getFacebookAdminId();
+    $pgtm_og['p:domain_verify'] = $helper->getPinterestId();
+    
+    $pgtm_og['og:url'] = Mage::helper('core/url')->getCurrentUrl();
 
-    <meta property="twitter:card" content="<?php echo $pgtm_twitter['card_format']; ?>" />
-    <meta property="twitter:site" content="<?php echo $pgtm_twitter['store_username']; ?>" />
-    <meta property="twitter:creator" content="<?php echo $pgtm_twitter['creator_username']; ?>" />
-    <meta property="twitter:image" content="<?php echo $pgtm_twitter['image']; ?>" />
+    if($pgtm_og['page_type']=="Product Detail"){
+        $pgtm_og['og:type'] = "product";
+        $pgtm_og['product:price:currency'] = Mage::app()->getStore()->getCurrentCurrencyCode();
 
-    <?php endif;?>
-
-    <meta property="og:title" content="<?php echo $pgtm_og['title']; ?>" />
-    <meta property="og:type" content="product" /> 
-    <?php
-    if($pgtm_og['page_type']=="Product Detail"):
-        if(Mage::registry('current_product')):
+        if(Mage::registry('current_product')){
             $pan_product_id = Mage::registry('current_product')->getId();
             $pan_product= Mage::getModel('catalog/product')->setStoreId($storeId)->load($pan_product_id);
-    ?>
-            <meta property="og:url" content="<?php echo $pan_product->getUrlInStore(array('_ignore_category' => true)); ?>"/>
-            <meta property="og:description" content="<?php echo Mage::helper('core')->quoteEscape($pan_product->getDescription()) ?>"/>
-            <?php
-            if($pan_product->getTypeId() === Mage_Catalog_Model_Product_Type::TYPE_GROUPED)
-            {
-                foreach ($pan_product->getTypeInstance(true)->getAssociatedProducts($pan_product) as $assoProd)
-                {
-                    echo('<meta property="product:price:amount" content="'.$tm->getPrice($assoProd->getId()).'"/>'."\n");
-                }
-                echo('<meta property="product:price:currency" content="' . Mage::app()->getStore()->getCurrentCurrencyCode() . '"/>'."\n");
-            }elseif($pan_product->getTypeId() === Mage_Catalog_Model_Product_Type::TYPE_BUNDLE)
-            {
-				$associated_ids = $helper->getBundleProducts($pan_product_id);
-				foreach($associated_ids as $child)
-				{
-					echo('<meta property="product:price:amount" content="'.$tm->getPrice($child).'"/>'."\n");
-				}               
-                echo('<meta property="product:price:currency" content="' . Mage::app()->getStore()->getCurrentCurrencyCode() . '"/>'."\n");
-            }else{
-				echo('<meta property="product:price:amount" content="'.$tm->getPrice($pan_product_id).'"/>'."\n");
-				echo('<meta property="product:price:currency" content="' . Mage::app()->getStore()->getCurrentCurrencyCode() . '"/>'."\n");
-			}
-        endif;
-    endif;
+        }
 
-    if($pgtm_og['page_type']=="Product Category"):
-    ?>
-    <meta property="og:type" content="product.group" />
-    <meta property="og:url" content="<?php echo Mage::helper('core/url')->getCurrentUrl() ?>"/>
-    <?php
-    endif;
-endif
+        if($pan_product->getTypeId() === Mage_Catalog_Model_Product_Type::TYPE_GROUPED)
+        {
+            $pgtm_og['product:price:amount'] = [];
+            foreach ($pan_product->getTypeInstance(true)->getAssociatedProducts($pan_product) as $assoProd)
+            {
+                $pgtm_og['product:price:amount'][] = $tm->getPrice($assoProd->getId());
+            }
+            
+        }elseif($pan_product->getTypeId() === Mage_Catalog_Model_Product_Type::TYPE_BUNDLE)
+        {
+            $associated_ids = $helper->getBundleProducts($pan_product_id);
+            $pgtm_og['product:price:amount'] = [];
+            foreach($associated_ids as $child)
+            {
+               $pgtm_og['product:price:amount'][] = $tm->getPrice($child, 'user');
+            }               
+        }else{
+            $pgtm_og['product:price:amount'] = $tm->getPrice($pan_product_id, 'user');
+        }
+    }
+
+    if($pgtm_og['page_type']=="Product Category"){
+        $pgtm_og['og:type'] = "product.group";
+    }
+
+    if( $helper->useTwitterCards()){
+        $pgtm_og['twitter:card'] = $pgtm_twitter['card_format'];
+        $pgtm_og['twitter:site'] = $pgtm_twitter['store_username'];
+        $pgtm_og['twitter:creator'] = $pgtm_twitter['creator_username'];
+        $pgtm_og['twitter:image'] = $pgtm_twitter['image'];
+    }
+
+    foreach ($pgtm_og as $k => $v){
+        if(is_array($v)){
+            foreach ($v as $ik => $iv){
+                echo('<meta property="' . $k . '" content="' . $iv . '" />'."\n");
+            }
+        } else {
+            echo('<meta property="' . $k . '" content="' . $v . '" />'."\n"); 
+        }
+        
+    }
+
+
+}
 ?>
 
 

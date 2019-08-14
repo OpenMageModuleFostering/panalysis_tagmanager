@@ -4,15 +4,15 @@ class Panalysis_Tagmanager_AjaxController extends Mage_Core_Controller_Front_Act
 {
     public function indexAction()
     {
-	echo "Hi";
-		
-	//$this->loadLayout();
-	//$this->renderLayout();
+        //echo "Hi";
+        
+    //$this->loadLayout();
+    //$this->renderLayout();
     }
-	
+    
     public function getCheckoutStateAction() 
     {
-	echo "start";
+        //echo "start";
     }
     
     public function checkAjaxAction()

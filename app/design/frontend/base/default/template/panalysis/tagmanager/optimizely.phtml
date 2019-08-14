@@ -1,0 +1,9 @@
+<?php
+
+$helper = Mage::helper('panalysis_tagmanager');
+
+if($helper->useOptimizely()){
+    echo('<script src="https://cdn.optimizely.com/js/' . $helper->getOptimizelyId(). '.js"></script>');
+}
+
+?>

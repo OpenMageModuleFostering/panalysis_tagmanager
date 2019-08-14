@@ -56,21 +56,22 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </brandcode>
-                        <colorcode translate="label">
-                            <label>Product Color Attribute Code</label>
-                            <frontend_type>text</frontend_type>
-                            <comment>Please enter the attribute code for color/variant attribute used in your website. If not specified, default color attribute would be used</comment>
-                            <sort_order>30</sort_order>
+                        <multiple_currencies translate="label">
+                            <label>Use Multilple Currencies</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <comment>If your site can process sales in multiple currencies turning this option on will send the price data to Google Analytics in the currency selected by the user.</comment>
+                            <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </colorcode>
+                        </multiple_currencies>
                         <enable_product_lists translate="label">
                             <label>Enable Product List View Tracking</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
                             <comment>Turn this on if you would like to track product list impressions.</comment>
-                            <sort_order>40</sort_order>
+                            <sort_order>50</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
@@ -235,6 +236,40 @@
                         </twitterimage>
                     </fields>
                 </opengraph>
+                <optimizely>
+                    <label>Optimizely Tag</label>
+                    <sort_order>30</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>true</expanded>
+                    <comment><![CDATA[<p>Enabling this feature will add the Optimizely code snippet to the head section of your site.</p>]]></comment>
+                    <fields>
+                        <is_enabled translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </is_enabled>
+                        
+                        <optimizelyid translate="label">
+                            <label>Optimizely Project ID</label>
+                            <frontend_type>text</frontend_type>
+                            <backend_model>Panalysis_TagManager_Model_Config_Data_NotEmpty</backend_model>
+                            <comment>Please enter your the Optimizely Project ID.</comment>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends>
+                                <is_enabled>1</is_enabled>
+                            </depends>
+                        </optimizelyid>
+                    </fields>
+                </optimizely>
             </groups>
         </panalysis_tagmanager>
     </sections>

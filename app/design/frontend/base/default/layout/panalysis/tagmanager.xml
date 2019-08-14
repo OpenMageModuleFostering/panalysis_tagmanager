@@ -7,10 +7,15 @@
                    template="panalysis/tagmanager/tagmanager.phtml"></block>
         </reference>
         <reference name="head">
+            <block type="panalysis_tagmanager/tagmanager" name="optimizely"
+                   template="panalysis/tagmanager/optimizely.phtml"></block>
+            <sort_order>0</sort_order>
+        </reference>           
+        <reference name="head">
             <block type="panalysis_tagmanager/tagmanager" name="datalayer"
                    template="panalysis/tagmanager/datalayer.phtml"></block>
         </reference>
-		<reference name="head">
+	<reference name="head">
             <block type="panalysis_tagmanager/tagmanager" name="opengraph"
                    template="panalysis/tagmanager/opengraph.phtml"></block>
         </reference>
