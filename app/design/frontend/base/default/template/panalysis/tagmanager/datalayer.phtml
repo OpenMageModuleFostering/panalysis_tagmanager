@@ -5,7 +5,6 @@ $contId = $helper->getContainerId();
 $checkoutState = $this->getCheckoutState();
 if(isset($contId)):
 ?>
-
 <script type="text/javascript">
     var dataLayer = dataLayer || [];
     <?php echo $this->buildDataLayer();?>
@@ -32,6 +31,5 @@ if(isset($contId)):
     });
     <?php endif ?>
 </script>
-
 <?php endif; ?>
 

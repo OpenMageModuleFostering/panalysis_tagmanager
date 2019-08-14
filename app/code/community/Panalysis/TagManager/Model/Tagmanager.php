@@ -48,9 +48,8 @@ class Panalysis_TagManager_Model_Tagmanager extends Mage_Core_Model_Abstract
 
     public function getBrand($product)
     {
-
         $brand = '';
-        //$product = Mage::getModel('catalog/product')->load($product->getID());
+	$product = Mage::getModel('catalog/product')->load($product->getID());
         $brandAttr = Mage::helper('panalysis_tagmanager')->getBrandCode();
         $attributes = $this->getAttributes($product);
         
@@ -67,12 +66,12 @@ class Panalysis_TagManager_Model_Tagmanager extends Mage_Core_Model_Abstract
     public function getVariant($product)
     {
         $color = '';
-        //$product = Mage::getModel('catalog/product')->load($product->getID());
+	$product = Mage::getModel('catalog/product')->load($product->getID());
         $colorAttr = Mage::helper('panalysis_tagmanager')->getColorCode();
         $attributes = $this->getAttributes($product);
-        
+		
         if (in_array($colorAttr, $attributes)) {
-            $color = @$product->getAttributeText($colorAttr);
+			$color = @$product->getAttributeText($colorAttr);
         } else {
             if (in_array('color', $attributes)) {
                 $color = @$product->getAttributeText('color');
@@ -98,40 +97,53 @@ class Panalysis_TagManager_Model_Tagmanager extends Mage_Core_Model_Abstract
 
     public function getCatArray($product)
     {
-        $cateNames = array();
-        $product = Mage::getModel('catalog/product')->load($product->getId());
-        $categoryCollection = $product->getCategoryCollection()->addAttributeToSelect('name');
-            
-        foreach($categoryCollection as $category)
-        {
+	$cateNames = array();
+	$product = Mage::getModel('catalog/product')->load($product->getId());
+	$categoryCollection = $product->getCategoryCollection()->addAttributeToSelect('name');
+		
+	foreach($categoryCollection as $category)
+	{
             $cateNames[] = $category->getName();
         }
-            
-        return $cateNames;
+		
+	return $cateNames;
     }
 
     public function setCheckoutState($state){
-        $this->state = $state;
+	$this->state = $state;
     }
-    
+	
     public function getCheckoutState(){
-        return $this->state;
+	return $this->state;
     }
-    
+	
     public function setCategoryProducts($list){
-        $this->categoryProducts = $list;
+	$this->categoryProducts = $list;
     }
-    
+	
     public function getCategoryProducts() {
-        return $this->categoryProducts;
+	return $this->categoryProducts;
     }
-    
+	
     // the following function is modified from https://github.com/CVM/Magento_GoogleTagManager
 
     public function getVisitorData()
     {
-        $customer = Mage::getSingleton('customer/session');
-        return $this->getVisitorOrderData($customer);
+	$data = array();
+	$customer = Mage::getSingleton('customer/session');
+
+	// visitorId
+	if ($customer->getCustomerId()) $data['visitorId'] = (string)$customer->getCustomerId();
+
+	// visitorLoginState
+	$data['visitorLoginState'] = ($customer->isLoggedIn()) ? 'Logged in' : 'Logged out';
+
+	// visitorType
+	$data['visitorType'] = (string)Mage::getModel('customer/group')->load($customer->getCustomerGroupId())->getCode();
+
+        $data = $this->getVisitorOrderData($customer);
+        	
+	return $data;
     }
     
     //check if user placed orders before and get total
@@ -141,13 +153,10 @@ class Panalysis_TagManager_Model_Tagmanager extends Mage_Core_Model_Abstract
         $orders = false;
         
         if(!$customer) $customer = Mage::getSingleton('customer/session');
-        $customerId = $customer->getCustomerId();
-        if ($customerId > 0) $data['customerId'] = (string) $customerId;
         
         if(Mage::getSingleton('customer/session')->isLoggedIn())
         {
-            $orders = Mage::getResourceModel('sales/order_collection')->addFieldToSelect('grand_total')->addAttributeToSelect('created_at')->addFieldToFilter('customer_id',$customer->getId());
-            $data['customerGroup'] = (string)Mage::getModel('customer/group')->load($customer->getCustomerGroupId())->getCode();
+            $orders = Mage::getResourceModel('sales/order_collection')->addFieldToSelect('grand_total')->addFieldToFilter('customer_id',$customer->getId());
             $data['visitorExistingCustomer'] = 'Yes';
         }else{
             
@@ -167,23 +176,16 @@ class Panalysis_TagManager_Model_Tagmanager extends Mage_Core_Model_Abstract
         }
         
         $ordersTotal = 0;
-        $numOrders = 0;
-
         if($orders)
         {
             foreach ($orders as $order)
             {
-                $ordersTotal += floatval($order->getGrandTotal());
-                $numOrders ++;
+                $ordersTotal += $order->getGrandTotal();
             }
         }
         
-        if($customerId > 0) {
-            $data['visitorLifetimeValue'] = $this->convertCurrency($ordersTotal);
-            $data['visitorLifetimeOrders'] = $numOrders; 
-        }
-
-
+        $data['visitorLifetimeValue'] = $this->convertCurrency($ordersTotal);
+        
         return $data;
     }
     

@@ -17,23 +17,23 @@ class Panalysis_TagManager_Helper_Data extends Mage_Core_Helper_Abstract
     const GTM_BRAND_CODE = 'panalysis_tagmanager/gtm/brandcode';
     const GTM_COLOR_CODE = 'panalysis_tagmanager/gtm/colorcode';
     const AJAX_ENABLED = 'panalysis_tagmanager/gtm/enable_ajax';
-    
+	
     private $store_id = 0;
-    
+	
     function __construct() {
         $this->store_id = Mage::app()->getStore()->getStoreId();
     }
-    
+	
     public function getExtensionVersion()
     {
-        return (string) Mage::getConfig()->getNode()->modules->Panalysis_TagManager->version;
+	return (string) Mage::getConfig()->getNode()->modules->Panalysis_TagManager->version;
     }
-    
+	
     public function getContainerId()
     {
         return Mage::getStoreConfig(self::GTM_CONTAINER_ID, $this->store_id);
     }
-    
+	
     public function getTrackProductList()
     {
         return Mage::getStoreConfig(self::GTM_TRACK_PRODUCT_LISTS, $this->store_id);
@@ -41,76 +41,76 @@ class Panalysis_TagManager_Helper_Data extends Mage_Core_Helper_Abstract
     
     public function useOpenGraph()
     {
-        return Mage::getStoreConfig(self::OG_IS_ENABLED, $this->store_id);
+	return Mage::getStoreConfig(self::OG_IS_ENABLED, $this->store_id);
     }
-    
+	
     public function getFacebookAppId()
     {
-        return Mage::getStoreConfig(self::FB_APP_ID, $this->store_id);
+    	return Mage::getStoreConfig(self::FB_APP_ID, $this->store_id);
     }
-    
+	
     public function getFacebookAdminId()
     {
-        return Mage::getStoreConfig(self::FB_ADMIN_ID, $this->store_id);
+    	return Mage::getStoreConfig(self::FB_ADMIN_ID, $this->store_id);
     }
-    
+	
     public function getPinterestId()
     {
-        return Mage::getStoreConfig(self::PINTEREST_ID, $this->store_id);
+    	return Mage::getStoreConfig(self::PINTEREST_ID, $this->store_id);
     }
     
     public function useTwitterCards()
     {
-        return Mage::getStoreConfig(self::TWITTER_ENABLED, $this->store_id);
+    	return Mage::getStoreConfig(self::TWITTER_ENABLED, $this->store_id);
     }
-    
+	
     public function useTwitterLageImage()
     {
-        return Mage::getStoreConfig(self::TWITTER_USELARGEIMAGE, $this->store_id);
+    	return Mage::getStoreConfig(self::TWITTER_USELARGEIMAGE, $this->store_id);
     }
-    
+	
     public function getTwitterStoreUsername()
     {
-        return Mage::getStoreConfig(self::TWITTER_STORE_USERNAME, $this->store_id);
+    	return Mage::getStoreConfig(self::TWITTER_STORE_USERNAME, $this->store_id);
     }
-    
+	
     public function getTwitterCreatorUsername()
     {
-        return Mage::getStoreConfig(self::TWITTER_CREATOR_USERNAME, $this->store_id);
+    	return Mage::getStoreConfig(self::TWITTER_CREATOR_USERNAME, $this->store_id);
     }
-    
+	
     public function getTwitterImage()
     {
-        return Mage::getStoreConfig(self::TWITTER_IMAGE, $this->store_id);
+    	return Mage::getStoreConfig(self::TWITTER_IMAGE, $this->store_id);
     }
-    
+	
     public function getListMaxProducts()
     {
-        return (int)Mage::getStoreConfig(self::GTM_MAX_PRODUCTS_IN_LISTS, $this->store_id);
+    	return (int)Mage::getStoreConfig(self::GTM_MAX_PRODUCTS_IN_LISTS, $this->store_id);
     }
-    
+	
     public function getBrandCode()
     {
-        return Mage::getStoreConfig(self::GTM_BRAND_CODE, $this->store_id);
+    	return Mage::getStoreConfig(self::GTM_BRAND_CODE, $this->store_id);
     }
    
     public function getColorCode()
     {
-        return Mage::getStoreConfig(self::GTM_COLOR_CODE, $this->store_id);
+    	return Mage::getStoreConfig(self::GTM_COLOR_CODE, $this->store_id);
     }
-    
+	
     public function CreateProductArray($product_id, $qty = 1, $full_category = false)
     {
         $product = Mage::getModel('catalog/product')->load($product_id);
-        if($product)
-        {
+	if($product)
+	{
             $tm = Mage::getSingleton('panalysis_tagmanager/tagmanager');
             $final_price = $tm->getPrice($product->getId());
-            
+			
             $product_array = array(
-                'name' => $product->getName(),
-                'id' => $product->getSku(),
-                'price' => $final_price,
+		'name' => $product->getName(),
+		'id' => $product->getSku(),
+		'price' => $final_price,
             );
            
             if($brand = $tm->getBrand($product)) $product_array['brand'] = $brand;
@@ -119,12 +119,12 @@ class Panalysis_TagManager_Helper_Data extends Mage_Core_Helper_Abstract
             if($full_category) $product_array['category'] = $tm->getCatArray($product);
             elseif($current_category = Mage::registry('current_category')) $product_array['category'] = $current_category->getName();
             else $product_array['category'] = $tm->getCategory($product);
-            
+			
             if($qty !== false && (int)$qty) $product_array['quantity'] = (int)$qty;
-            
+			
             return $product_array;
-            
-        } else return array();
+			
+	}else return array();
     }
     
     //get products just once
@@ -153,97 +153,94 @@ class Panalysis_TagManager_Helper_Data extends Mage_Core_Helper_Abstract
     }
     
     public function buildProductDetailsData($products){
-        $data = array(
+    	$data = array(
             'ecommerce' => array(
                 'currencyCode' => Mage::app()->getStore()->getCurrentCurrencyCode(),
-                'detail' => array(
-                        'products' => $products
-                )
+    		'detail' => array(
+                    'products' => $products
+    		)
             )
-        );
-        return $data;
+    	);
+    	return $data;
     }
     
     public function buildOrderData($order){      
-        $data = array(
+    	$data = array(
             'ecommerce' => array(
-                'currencyCode' => Mage::app()->getStore()->getCurrentCurrencyCode(),
                 'purchase' => array(
                     'actionField' => $order['actionField'],
                     'products' => $order['transactionProducts']
+    		)
             )
-            )
-        );
-        
-        return $data;
+    	);
+    	
+    	return $data;
 
     }
 
     public function buildCategoryData($prodlist){
-        $data = array();
-        if(count($prodlist)>0){
-            
+    	$data = array();
+    	if(count($prodlist)>0){
+    		
             $data = array(
-                'event' => 'productlist',
                 'ecommerce' => array(
                     'currencyCode' => Mage::app()->getStore()->getCurrentCurrencyCode(),
                     'impressions' => $prodlist
                 )
             );
-        }
-            
-        return $data;
+    	}
+			
+	return $data;
     }
     
     public function buildCheckoutData($products){
-        if(empty($products)) return array();
-        $data = array(
+    	if(empty($products)) return array();
+    	$data = array(
             'event' => 'checkout',
             'ecommerce' => array(
                 'currencyCode' => Mage::app()->getStore()->getCurrentCurrencyCode(),
-                'checkout' => array(
-                        'actionField' => array(
-                            'step' =>'1', 
-                            'option' => 'review cart'
-                        ),
-                        'products' => $products
-                    )
-                )
-        );
+    		'checkout' => array(
+                    'actionField' => array(
+    			'step' =>'checkout', 
+    			'option' => 'review cart'
+                    ),
+                    'products' => $products
+    		)
+            )
+    	);
         
-        return $data;
+    	return $data;
     }
     
     public function buildOnePageCartCheckoutData($products){
-        $data = array(
+    	$data = array(
             'event' => 'checkout',
             'ecommerce' => array(
-                'currencyCode' => Mage::app()->getStore()->getCurrentCurrencyCode(),
-                'checkout' => array(
+    		'checkout' => array(
                     'actionField' => array(
-                        'step' =>'1', 
-                        'option' => 'start checkout'
+                        'step' =>'checkout', 
+    			'option' => 'start checkout'
                     ),
                     'products' => $products
-                )
+    		)
             )
-        );
+    	);
         
-        return $data;
+    	return $data;
     }
     
     public function buildAddToCartData($prods)
     {
-        $data = array(
+	$data = array(
             'event' => 'addToCart',
             'ecommerce' => array(
                 'currencyCode' => Mage::app()->getStore()->getCurrentCurrencyCode(),
-                'add' => array(
-                            'products' => array_values($prods)
-                )
+		'add' => array(
+                    'products' => $prods
+		)
             )
-        );
-    
+	);
+	
         return $data;
     }
     
