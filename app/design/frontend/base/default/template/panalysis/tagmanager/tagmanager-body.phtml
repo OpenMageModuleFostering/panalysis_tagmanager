@@ -1,0 +1,10 @@
+<?php
+$helper = Mage::helper('panalysis_tagmanager');
+$contId = $helper->getContainerId();
+
+if(isset($contId)): ?>
+<!-- Start Google Tag Manager Plus (noscript) by Panalysis. Version: <?php echo $helper->getExtensionVersion(); ?>. See http://www.panalysis.com/gtmplus for details and support -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo $contId; ?>"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->           
+<?php endif; ?>

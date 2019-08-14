@@ -8,24 +8,24 @@ if(isset($contId)):
 ?>
 
 <script type="text/javascript">
-    var dataLayer = dataLayer || [];
-    <?php echo $this->buildDataLayer();?>
-    <?php if($helper->AjaxEnabled() && Mage::app()->getRequest()->getModuleName() != 'checkout'): ?>
-        function gtmCheckAddToCart() {
-            jQuery.ajax({
-                url: "<?php echo $this->getUrl('tagmanager/ajax/checkAddToCart') ?>",
-                dataType: 'json',
-                data: "ajax_layer=1",
-                success: function(e, xhr, settings) {
-                    var data = (e);
-                    if(settings.status == 200 && data.response == 'datalayer')
-                    {
-                        dataLayer.push(data.code);
-                    }
+var dataLayer = dataLayer || [];
+<?php echo $this->buildDataLayer();?>
+<?php if($helper->AjaxEnabled() && Mage::app()->getRequest()->getModuleName() != 'checkout'): ?>
+    function gtmCheckAddToCart() {
+        jQuery.ajax({
+            url: "<?php echo $this->getUrl('tagmanager/ajax/checkAddToCart') ?>",
+            dataType: 'json',
+            data: "ajax_layer=1",
+            success: function(e, xhr, settings) {
+                var data = (e);
+                if(settings.status == 200 && data.response == 'datalayer')
+                {
+                    dataLayer.push(data.code);
                 }
-            });
-        }
-    <?php endif ?>
+            }
+        });
+    }
+<?php endif ?>
 </script>
 
 <?php endif; ?>

@@ -3,18 +3,18 @@
 <layout version="0.1.0">
     <default>
         <reference name="after_body_start">
-            <block type="panalysis_tagmanager/tagmanager" name="tag.manager" as="gtm"
-                   template="panalysis/tagmanager/tagmanager.phtml"></block>
+            <block type="panalysis_tagmanager/tagmanager" name="tagmanagerbody" as="gtm"
+                   template="panalysis/tagmanager/tagmanager-body.phtml"></block>
         </reference>
         <reference name="head">
             <block type="panalysis_tagmanager/tagmanager" name="optimizely"
                    template="panalysis/tagmanager/optimizely.phtml"></block>
-            <sort_order>0</sort_order>
-        </reference>           
-        <reference name="head">
             <block type="panalysis_tagmanager/tagmanager" name="datalayer"
                    template="panalysis/tagmanager/datalayer.phtml"></block>
-        </reference>
+            <block type="panalysis_tagmanager/tagmanager" name="tagmanagerhead" as="gtm"
+                   template="panalysis/tagmanager/tagmanager-head.phtml"></block>
+            <sort_order>0</sort_order>
+        </reference>           
 	<reference name="head">
             <block type="panalysis_tagmanager/tagmanager" name="opengraph"
                    template="panalysis/tagmanager/opengraph.phtml"></block>
