@@ -121,6 +121,14 @@ class Panalysis_TagManager_Helper_Data extends Mage_Core_Helper_Abstract
         return $currencyCode;
     }
     
+    public function getURL()
+    {
+        $url = Mage::helper('core/url')->getCurrentUrl();
+        // get rid of any query parameters
+        $url = preg_replace('/\?.*/', '', $url);
+        return $url;
+    }
+    
     public function createProductArray($product_obj, $qty = 1)
     {
         $product = $this->getProductFromObj($product_obj);

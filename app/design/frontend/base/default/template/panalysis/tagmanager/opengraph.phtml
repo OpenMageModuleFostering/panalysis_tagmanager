@@ -15,7 +15,7 @@ if($helper->useOpenGraph()){
     $pgtm_og['fb:adminid'] = $helper->getFacebookAdminId();
     $pgtm_og['p:domain_verify'] = $helper->getPinterestId();
     
-    $pgtm_og['og:url'] = Mage::helper('core/url')->getCurrentUrl();
+    $pgtm_og['og:url'] = $helper->getURL();
 
     if($pgtm_og['page_type']=="Product Detail"){
         $pgtm_og['og:type'] = "product";

@@ -3,6 +3,7 @@ $helper = Mage::helper('panalysis_tagmanager');
 
 $contId = $helper->getContainerId();
 $checkoutState = $this->getCheckoutState();
+
 if(isset($contId)):
 ?>
 
@@ -10,26 +11,20 @@ if(isset($contId)):
     var dataLayer = dataLayer || [];
     <?php echo $this->buildDataLayer();?>
     <?php if($helper->AjaxEnabled() && Mage::app()->getRequest()->getModuleName() != 'checkout'): ?>
-    Ajax.Responders.register({
-      onCreate: function() {
-        //create ajax request
-      },
-      onComplete: function() {
-        jQuery.ajax({
-            url: "<?php echo $this->getUrl('tagmanager/ajax/checkAjax') ?>",
-            dataType: 'json',
-            data: "ajax_layer=1",
-            success: function(e, xhr, settings) {
-                var data = (e);
-
-                if(settings.status == 200 && data.response == 'datalayer')
-                {
-                    dataLayer.push(data.code);
+        function gtmCheckAddToCart() {
+            jQuery.ajax({
+                url: "<?php echo $this->getUrl('tagmanager/ajax/checkAddToCart') ?>",
+                dataType: 'json',
+                data: "ajax_layer=1",
+                success: function(e, xhr, settings) {
+                    var data = (e);
+                    if(settings.status == 200 && data.response == 'datalayer')
+                    {
+                        dataLayer.push(data.code);
+                    }
                 }
-            }
-        });
-      }
-    });
+            });
+        }
     <?php endif ?>
 </script>
 

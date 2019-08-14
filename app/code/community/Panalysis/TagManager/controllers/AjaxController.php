@@ -15,7 +15,7 @@ class Panalysis_Tagmanager_AjaxController extends Mage_Core_Controller_Front_Act
         //echo "start";
     }
     
-    public function checkAjaxAction()
+    public function checkAddToCartAction()
     {
         $session = Mage::getSingleton('core/session');
         $ajax_flag = Mage::app()->getRequest()->getParam('ajax_layer', false);
@@ -42,7 +42,7 @@ class Panalysis_Tagmanager_AjaxController extends Mage_Core_Controller_Front_Act
         
         $response = Mage::helper('core')->jsonEncode($data);
         
-        $this->getResponse()->clearHeaders()->setHeader('Content-type','application/json',true);
+        $this->getResponse()->setHeader('Content-type','application/json',true);
         $this->getResponse()->setBody($response);
     }
 

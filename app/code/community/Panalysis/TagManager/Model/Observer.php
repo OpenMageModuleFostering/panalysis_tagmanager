@@ -57,7 +57,7 @@ class Panalysis_TagManager_Model_Observer
                 
                 $product = Mage::getModel('catalog/product')->loadByAttribute('sku',$sku);
                 
-                $__prod = $helper->createProductArray($ip->getId(), $qty);
+                $__prod = $helper->createProductArray($product->getId(), $qty);
                 if($last_cat){
                     $__prod['category'] = $last_cat;
                 }
@@ -142,7 +142,6 @@ class Panalysis_TagManager_Model_Observer
         }
         return $event;
     }
-
     
     private function addItemToCart($product_id, $qty=1)
     {
@@ -165,6 +164,7 @@ class Panalysis_TagManager_Model_Observer
     {
         $helper = Mage::helper('panalysis_tagmanager');
         $session = Mage::getSingleton('core/session');
+        if (is_object($product)) $product = $product->getId();
         try {
             $rmProduct = array();
             $tm = Mage::getSingleton('panalysis_tagmanager/tagmanager');
@@ -288,9 +288,9 @@ class Panalysis_TagManager_Model_Observer
                 $prod['price'] = Mage::helper('core')->currency($prod['price'], false, false);
 
             $prod['price'] = number_format($prod['price'], 2);
-
-            if($variant) $prod['variant'] = $variant;
-            if($brand) $prod['brand'] = $brand;
+            
+            if(isset($variant)) $prod['variant'] = $variant;
+            if(isset($brand)) $prod['brand'] = $brand;
 
             $catProducts[] = $prod;
         }

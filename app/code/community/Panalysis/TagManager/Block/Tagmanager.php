@@ -191,9 +191,9 @@ class Panalysis_TagManager_Block_Tagmanager extends Mage_Core_Block_Template
                 }
                 else
                 {
-                    $revenue = $order->getGrandTotal();
-                    $tax = $order->getTaxAmount();
-                    $shipping = $order->getShippingAmount();
+                    $revenue = $order->getBaseGrandTotal();
+                    $tax = $order->getBaseTaxAmount();
+                    $shipping = $order->getBaseShippingAmount();
                 }
                 $revenue = round($revenue,2);
                 $tax = round($tax,2);
@@ -245,7 +245,7 @@ class Panalysis_TagManager_Block_Tagmanager extends Mage_Core_Block_Template
                     if($helper->getUseMultipleCurrencies()) 
                         $item_price = Mage::helper('core')->currency($item->getPrice(), false, false);
                     else
-                        $item_price = $item->getPrice();
+                        $item_price = $item->getBasePrice();
                     
                     $product_array = array(
                         'name' => $product->getName(),

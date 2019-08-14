@@ -21,7 +21,7 @@ class Panalysis_TagManager_Model_Tagmanager extends Mage_Core_Model_Abstract
      * @param $product
      * @return mixed
      */
-    public function getPrice($product_id, $currency='default')
+    public function getPrice($product_id)
     {
         $storeId = Mage::app()->getStore()->getStoreId();
         $product = Mage::getModel('catalog/product')->setStoreId($storeId)->load($product_id); 
@@ -40,7 +40,7 @@ class Panalysis_TagManager_Model_Tagmanager extends Mage_Core_Model_Abstract
             $price = $product->getFinalPrice();
         }
 
-        if(Mage::helper('panalysis_tagmanager')->getUseMultipleCurrencies() || $currency=='user')
+        if(Mage::helper('panalysis_tagmanager')->getUseMultipleCurrencies())
             $price = Mage::helper('core')->currency($price, false, false);
         
         $final_price = number_format($price, 2);
@@ -212,25 +212,14 @@ class Panalysis_TagManager_Model_Tagmanager extends Mage_Core_Model_Abstract
         }
         
         if($customerId > 0) {
-            $data['visitorLifetimeValue'] = $this->convertCurrency($ordersTotal);
+            if(Mage::helper('panalysis_tagmanager')->getUseMultipleCurrencies())
+                $data['visitorLifetimeValue'] = Mage::helper('core')->currency($ordersTotal, false, false);
+            else
+                $data['visitorLifetimeValue'] = $ordersTotal;
             $data['visitorLifetimeOrders'] = $numOrders; 
         }
 
 
         return $data;
-    }
-    
-    private function convertCurrency($price)
-    {
-        $from = Mage::app()->getStore()->getBaseCurrencyCode();
-        $to = Mage::app()->getStore()->getCurrentCurrencyCode();
-        
-        if($from != $to)
-        {
-            $price = Mage::helper('directory')->currencyConvert($price, $from, $to);
-            $price = number_format($price, 2);
-        }
-        
-        return $price;
     }
 }
